@@ -52,7 +52,7 @@ app.get("/pitches", async (req, res) => {
   }
 });
 
-// GET /pitches/available-slots?date=YYYY-MM-DD
+// GET /pitches/available-slots?date=YYYY-MM-DD 2025
 app.get("/pitches/available-slots", async (req, res) => {
   const { date } = req.query;
   if (!date)
