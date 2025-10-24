@@ -9,8 +9,8 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - ./db-init:/docker-entrypoint-initdb.d  # ✅ mount ทั้งโฟลเดอร์
-      - ./postgres_data:/var/lib/postgresql/data
+      - ./db-init:/docker-entrypoint-initdb.d   # ใช้ไฟล์ .sql ในโฟลเดอร์นี้
+      - postgres_data:/var/lib/postgresql/data  # ใช้ Docker volume จริง
     restart: always
 
   pgadmin:
