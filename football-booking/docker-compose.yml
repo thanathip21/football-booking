@@ -5,12 +5,12 @@ services:
     environment:
       POSTGRES_USER: admin
       POSTGRES_PASSWORD: password123
-      POSTGRES_DB: football_booking01
+      POSTGRES_DB: amzing_thailand1
     ports:
       - "5432:5432"
     volumes:
       - ./db-init:/docker-entrypoint-initdb.d   # ใช้ไฟล์ .sql ในโฟลเดอร์นี้
-      - postgres_data:/var/lib/postgresql/data  # ใช้ Docker volume จริง
+      - postgres_data:/var/lib/postgresql  # ใช้ Docker volume จริง
     restart: always
 
   pgadmin:
