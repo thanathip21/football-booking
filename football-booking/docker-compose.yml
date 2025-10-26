@@ -7,7 +7,7 @@ services:
       POSTGRES_PASSWORD: password123
       POSTGRES_DB: football_booking01
     ports:
-      - "5432:5432"
+      - "5433:5433"
     volumes:
       - ./db-init:/docker-entrypoint-initdb.d   # ใช้ไฟล์ .sql ในโฟลเดอร์นี้
       - postgres_data:/var/lib/postgresql/data  # ใช้ Docker volume จริง
