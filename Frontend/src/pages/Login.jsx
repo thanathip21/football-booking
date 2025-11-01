@@ -22,7 +22,7 @@ function Login() {
             localStorage.setItem('token', token);
             localStorage.setItem('user', JSON.stringify(user));
 
-            navigate('/my-bookings'); // ไปหน้า "การจองของฉัน"
+            navigate('/dashboard'); // ไปหน้า "การจองของฉัน"
         } catch (err) {
             setError(err.response?.data?.message || 'เกิดข้อผิดพลาดในการ Login');
         }

@@ -1,32 +1,41 @@
 // src/App.jsx
 import { Routes, Route, Link } from 'react-router-dom';
-import { Container, Group, Anchor } from '@mantine/core'; // Import UI สำหรับเมนู
+// ⭐️ 1. เพิ่ม 'Container', 'Group', และ 'Anchor' เข้าไปใน import นี้
+import { Container, Group, Anchor } from '@mantine/core';
 
-// Import หน้าที่เราสร้าง
 import Login from './pages/Login';
 import Register from './pages/Register';
-// import MyBookings from './pages/MyBookings'; // เดี๋ยวเราค่อยสร้าง
+import Dashboard from './pages/Dashboard';
+import MyBookings from './pages/MyBookings';
+import CreateBooking from './pages/CreateBooking'; 
+import PrivateRoute from './components/PrivateRoute';
 
 function App() {
   return (
+    // ⭐️ 2. ตอนนี้ React รู้จัก <Container> แล้ว
     <Container>
-      {/* สร้างเมนูง่ายๆ ด้วย Mantine */}
       <Group justify="center" mt="lg">
-        <Anchor component={Link} to="/login">
-          เข้าสู่ระบบ
-        </Anchor>
-        <Anchor component={Link} to="/register">
-          สมัครสมาชิก
-        </Anchor>
+        <Anchor component={Link} to="/dashboard">หน้าหลัก (จองสนาม)</Anchor>
+        <Anchor component={Link} to="/my-bookings">การจองของฉัน</Anchor>
+        <Anchor component={Link} to="/login">เข้าสู่ระบบ</Anchor>
+        <Anchor component={Link} to="/register">สมัครสมาชิก</Anchor>
       </Group>
       
       <hr />
-
-      {/* ส่วนที่สลับหน้าไปมา */}
+      
       <Routes>
+        {/* หน้าสาธารณะ */}
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
-        {/* <Route path="/my-bookings" element={<MyBookings />} /> */}
+
+        {/* หน้าที่ต้อง Login (ยามเฝ้า) */}
+        <Route element={<PrivateRoute />}>
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/my-bookings" element={<MyBookings />} />
+          <Route path="/create-booking" element={<CreateBooking />} /> 
+          <Route path="/" element={<Dashboard />} />
+        </Route>
+        
       </Routes>
     </Container>
   );
