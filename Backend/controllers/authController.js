@@ -1,4 +1,3 @@
-// controllers/authController.js
 const pool = require("../db");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
@@ -99,17 +98,9 @@ exports.getMyBookings = async (req, res) => {
   try {
     const userId = req.user.user_id;
 
-    const query = `
-            SELECT booking_id, user_id, pitch_id, booking_date, start_time, end_time, status 
-            FROM bookings 
-            WHERE user_id = $1 
-              AND status != 'cancelled' 
-            ORDER BY booking_date ASC, start_time ASC
-        `;
-
-    // เราใช้ $1 สำหรับ userId, ไม่มีการเพิ่มตัวแปรใหม่
+    const query =
+      "SELECT b.booking_id, b.user_id, b.pitch_id, b.booking_date, b.start_time, b.end_time, b.status, p.name as pitch_name FROM bookings b JOIN pitches p ON b.pitch_id = p.pitch_id WHERE b.user_id = $1 AND b.status != 'cancelled' ORDER BY b.booking_date ASC, b.start_time ASC";
     const result = await pool.query(query, [userId]);
-
     res.json(result.rows);
   } catch (err) {
     console.error("Error in /my-bookings:", err);

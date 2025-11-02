@@ -1,4 +1,3 @@
-// controllers/bookingController.js
 const pool = require("../db");
 const { generateTimeSlots, timeToMinutes } = require("../utils/timeUtils");
 
@@ -56,46 +55,56 @@ exports.getAvailableSlots = async (req, res) => {
 };
 
 // POST /bookings
+// controllers/bookingController.js
+
 exports.createBooking = async (req, res) => {
   const { pitch_id, booking_date, start_time, duration_hours } = req.body;
   const user_id = req.user.user_id;
 
   if (!pitch_id || !booking_date || !start_time || !duration_hours) {
     return res.status(400).json({ message: "กรุณาส่งข้อมูลครบทุก field" });
-  }
+  } // 1. แปลง start_time (จาก "HH:MM") ให้เป็น "HH:MM:SS"
 
-  // แปลง duration เป็น end_time
-  let [h, m] = start_time.split(":").map(Number);
+  const startTimeWithSeconds = start_time.includes(":")
+    ? `${start_time.split(":")[0]}:${start_time.split(":")[1]}:00`
+    : start_time; // 2. คำนวณ end_time ให้มีวินาที (HH:MM:SS)
+
+  let [h, m] = startTimeWithSeconds.split(":").map(Number);
   let endH = h + Number(duration_hours);
   let endM = m;
 
-  const calculated_end_time =
-    (endH >= 24 ? "00" : endH.toString().padStart(2, "0")) +
-    ":" +
-    endM.toString().padStart(2, "0");
+  const end_h_str = endH >= 24 ? "00" : endH.toString().padStart(2, "0");
+  const end_m_str = endM.toString().padStart(2, "0");
+  const calculated_end_time = `${end_h_str}:${end_m_str}:00`;
 
   try {
-    // ตรวจสอบว่าช่วงเวลานี้ซ้อนกับการจองเก่าหรือไม่
-    const check = await pool.query(
-      `SELECT * FROM bookings 
-             WHERE pitch_id=$1 AND booking_date=$2
-             AND status = 'confirmed'
-               AND start_time < $3 AND end_time > $4`,
-      [pitch_id, booking_date, calculated_end_time, start_time]
-    );
+    // 3. ⭐️ (แก้ไข) SQL Query ตรวจสอบ (แบบบรรทัดเดียว)
+    const checkQuery =
+      "SELECT * FROM bookings WHERE pitch_id = $1 AND booking_date = $2 AND status = 'confirmed' AND (start_time < $3 OR $3 = '00:00:00') AND (end_time > $4 OR end_time = '00:00:00')";
+
+    const check = await pool.query(checkQuery, [
+      pitch_id,
+      booking_date,
+      calculated_end_time,
+      startTimeWithSeconds,
+    ]);
 
     if (check.rows.length > 0) {
       return res
         .status(400)
         .json({ message: "สนามนี้ถูกจองแล้วในช่วงเวลานี้" });
-    }
+    } // 4. ⭐️ (แก้ไข) SQL Query บันทึก (แบบบรรทัดเดียว)
 
-    // บันทึก booking
-    const result = await pool.query(
-      `INSERT INTO bookings (user_id, pitch_id, booking_date, start_time, end_time, status)
-             VALUES ($1,$2,$3,$4,$5,'confirmed') RETURNING *`,
-      [user_id, pitch_id, booking_date, start_time, calculated_end_time]
-    );
+    const insertQuery =
+      "INSERT INTO bookings (user_id, pitch_id, booking_date, start_time, end_time, status) VALUES ($1,$2,$3,$4,$5,'confirmed') RETURNING *";
+
+    const result = await pool.query(insertQuery, [
+      user_id,
+      pitch_id,
+      booking_date,
+      startTimeWithSeconds,
+      calculated_end_time,
+    ]);
 
     res.json(result.rows[0]);
   } catch (err) {
