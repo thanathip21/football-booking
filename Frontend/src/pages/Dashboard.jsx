@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../api";
-import { DatePicker } from "@mantine/dates";
+import { DatePickerInput } from "@mantine/dates"; // 👈 เปลี่ยนมาใช้ตัวนี้
 import {
   Container,
   Title,
@@ -55,7 +55,7 @@ function Dashboard() {
       return map;
     }, {});
   }, [pitchesData]);
-  
+
   // 🌟 Logic: จัดเรียงข้อมูลช่องว่างให้อยู่ในโครงสร้าง Map เพื่อให้ค้นหาเร็วขึ้น
   const availableSlotsMap = useMemo(() => {
     return pitchesData.reduce((acc, pitch) => {
@@ -75,9 +75,9 @@ function Dashboard() {
   const fetchAvailableSlots = async (dateToFetch) => {
     setLoading(true);
     setError("");
-    
+
     const dateString = toYYYYMMDD(dateToFetch);
-    
+
     try {
       const response = await api.get(
         `/pitches/available-slots?date=${dateString}`
@@ -94,27 +94,29 @@ function Dashboard() {
       setLoading(false);
       setIsDataInitialized(true); // 🌟 4. เมื่อโหลดเสร็จแล้วอนุญาตให้แสดงตาราง
     }
-  };
+    };
+  
 
   // 🌟 5. ลบ useEffect ที่ทำให้เกิดการยิง API อัตโนมัติออก
   useEffect(() => {
     // กำหนด Default Date เป็นวันนี้เมื่อเปิดหน้าครั้งแรก (แต่ไม่ยิง API)
     if (selectedDate === null) {
-        setSelectedDate(new Date());
+      setSelectedDate(new Date());
     }
-  }, []); 
-
+  }, []);
+  
 
   // 🌟 6. NEW: Handler สำหรับปุ่ม Search
   const handleSearchClick = () => {
     if (validDate) {
-        fetchAvailableSlots(validDate);
+      fetchAvailableSlots(validDate); // 👈 ถูกเรียกเมื่อกด Search
     } else {
-        setError("กรุณาเลือกวันที่ก่อนกดค้นหา");
-        setIsDataInitialized(false);
+      setError("กรุณาเลือกวันที่ก่อนกดค้นหา");
+      setIsDataInitialized(false);
     }
-  }
-
+    
+  };
+  
 
   // -----------------------------------------------------
   // Booking Handler (remains the same)
@@ -124,139 +126,198 @@ function Dashboard() {
       setError("กรุณาเลือกวันที่ที่ถูกต้องก่อนดำเนินการจอง");
       return;
     }
-    
+
     // ค้นหาข้อมูลสนามทั้งหมดเพื่อส่งไปหน้า CreateBooking
-    const pitch = pitchesData.find(p => p.pitch_id === pitchId);
-    
+    const pitch = pitchesData.find((p) => p.pitch_id === pitchId);
+
     if (pitch) {
-        navigate("/create-booking", {
-            state: {
-                pitch_id: pitchId,
-                pitch_name: pitch.name,
-                date: toYYYYMMDD(validDate),
-                start_time: startTime, // 'HH:MM:SS'
-                // ส่ง Array ของช่องว่างทั้งหมดของสนามนั้นๆ ไป
-                all_available_slots: pitch.slots, 
-            },
-        });
+      navigate("/create-booking", {
+        state: {
+          pitch_id: pitchId,
+          pitch_name: pitch.name,
+          date: toYYYYMMDD(validDate),
+          start_time: startTime, // 'HH:MM:SS'
+          // ส่ง Array ของช่องว่างทั้งหมดของสนามนั้นๆ ไป
+          all_available_slots: pitch.slots,
+        },
+      });
     }
   };
-
 
   // -----------------------------------------------------
   // Component Rendering
   // -----------------------------------------------------
-  
+
   // Custom Cell Component for Schedule (remains the same)
   const TimeSlotCell = ({ pitchId, time }) => {
     const isAvailable = availableSlotsMap[pitchId]?.has(time);
-    
+
     // '00:00:00' should not be bookable (it's the start of next day)
     if (time === "00:00") {
-        return <div className="time-slot midnight-slot" />;
+      return <div className="time-slot midnight-slot" />;
     }
 
     // Determine the next hour (e.g., 14:00:00 for 13:00:00 slot)
-    const nextHour = String(Number(time.substring(0, 2)) + 1).padStart(2, "0") + ":00";
+    const nextHour =
+      String(Number(time.substring(0, 2)) + 1).padStart(2, "0") + ":00";
 
     const statusClass = isAvailable ? "available" : "booked";
     const action = isAvailable ? () => handleBookingClick(pitchId, time) : null;
-    
+
     // Only available slots are clickable
     return (
-      <div 
+      <div
         className={`time-slot ${statusClass}`}
         onClick={action}
-        title={isAvailable ? `จอง ${time} - ${nextHour.substring(0, 5)}` : "ไม่ว่าง"}
+        title={
+          isAvailable ? `จอง ${time} - ${nextHour.substring(0, 5)}` : "ไม่ว่าง"
+        }
       >
         {isAvailable ? "" : "X"}
       </div>
     );
   };
-  
+
   // Get unique pitch IDs from fetched data to build columns
-  const pitchIds = pitchesData.map(p => p.pitch_id);
-
-
+  const pitchIds = pitchesData.map((p) => p.pitch_id);
+const handleDateChange = (date) => {
+    setSelectedDate(date);
+    if (date && !isNaN(date.getTime())) {
+        // 🌟 เรียก fetchAvailableSlots ทันทีที่มีการเลือกวันที่ที่ถูกต้อง
+        fetchAvailableSlots(date); 
+    } else {
+        // ล้างตารางและสถานะหากวันที่ไม่ถูกต้อง
+        setPitchesData([]);
+        setIsDataInitialized(false);
+    }
+};
   return (
     <Container size="xl" px="xs">
       <Title order={1} ta="center" my="lg" color="#16a34a">
         ตารางเวลาสนามฟุตบอล
       </Title>
 
-      <Paper shadow="xl" p="md" withBorder style={{ backgroundColor: "#f0fff0", marginBottom: '20px' }}>
-        <Title order={4} color="#15803d">ค้นหาวันที่ว่าง</Title>
-        <Group mt="sm">
-            <DatePicker
-              locale="th"
-              value={selectedDate}
-              onChange={setSelectedDate}
-              minDate={new Date()}
-              placeholder="เลือกวันที่"
-              clearable={false}
-            />
-            {/* 🌟 7. ปุ่ม Search ถูกผูกกับ handleSearchClick */}
-            <Button 
-                onClick={handleSearchClick}
-                style={{ backgroundColor: "#16a34a" }}
-                disabled={!validDate || loading}
-            >
-                Search
-            </Button>
+      <Paper
+        shadow="xl"
+        p="md"
+        withBorder
+        style={{ backgroundColor: "#f0fff0", marginBottom: "20px" }}
+      >
+        <Title order={4} color="#15803d">
+          ค้นหาวันที่ว่าง
+        </Title>
+        <Group mt="sm" align="flex-end" style={{ gap: "10px" }}>
+          {" "}
+          {/* 👈 จัดการ Group Alignment */}
+          {/* 🌟 ใช้ DatePickerInput แทน DatePicker เดิม */}
+          <DatePickerInput
+            label="วันที่" // 👈 เพิ่ม Label หรือตัดออกหากต้องการให้เป็นไปตามรูป
+            locale="th"
+            // value={selectedDate}
+            // onChange={handleDateChange} 
+            minDate={new Date()}
+            placeholder="เลือกวันที่"
+            clearable={false}
+            // style={{ flexGrow: 1 }} // 👈 ให้ช่อง Input ขยายเต็มที่
+            // 🌟 เพิ่ม popoverProps เพื่อควบคุมขนาดความกว้าง
+            popoverProps={{
+              // 'target' คือขนาดของ Dropdown Popover
+              // 'width' สามารถเป็น 'auto' หรือค่าคงที่ เช่น 280
+              // หากต้องการให้ Dropdown แคบลง ควรใช้ค่าคงที่
+              width: 280, // 👈 ลองใช้ค่าที่เล็กลง เช่น 280px หรือ 250px
+            }}
+            // 🌟 จุดที่ต้องเพิ่มโค้ดเพื่อปรับ Style ภายใน
+            styles={{
+              // ปรับขนาดของตัวอักษรของเดือน/ปี (เช่น "พฤศจิกายน 2025")
+              monthLevel: {
+                fontSize: "16px", // ลองปรับขนาดตามต้องการ
+              },
+              // ปรับขนาดตัวอักษรของวันในสัปดาห์ (เช่น "จ., อ., พ.")
+              weekday: {
+                fontSize: "13px", // ลองปรับขนาดตามต้องการ
+              },
+              // ปรับขนาดของตัวเลขวันในปฏิทิน
+              day: {
+                fontSize: "14px", // ลองปรับขนาดตามต้องการ
+                height: "30px", // ปรับความสูงของช่องวัน
+                width: "30px", // ปรับความกว้างของช่องวัน
+              },
+              // ปรับขนาดของไอคอนลูกศร (Navigation Arrows)
+              calendarHeaderControl: {
+                height: "30px",
+                width: "30px",
+              },
+            }}
+          />
+          {/* 🌟 ปุ่ม Search ของคุณ */}
+          <Button
+            onClick={handleSearchClick}
+            style={{ backgroundColor: "#16a34a", height: "36px" }} // 👈 ปรับความสูงให้เข้ากับ Input
+            disabled={!validDate || loading}
+          >
+            ค้นหาสนาม
+          </Button>
         </Group>
       </Paper>
-      
-      {loading && <Center py="xl"><Loader size="lg" /></Center>}
-      {error && <Alert color="red" my="lg">{error}</Alert>}
-      
+
+      {loading && (
+        <Center py="xl">
+          <Loader size="lg" />
+        </Center>
+      )}
+      {error && (
+        <Alert color="red" my="lg">
+          {error}
+        </Alert>
+      )}
+
       {/* 🌟 8. CONDITION: แสดงตารางเมื่อ isDataInitialized เป็น true และมีข้อมูล */}
       {!loading && !error && isDataInitialized && pitchesData.length > 0 && (
         <Paper shadow="xl" p="xs" withBorder style={{ overflowX: "auto" }}>
           <div className="schedule-grid">
             {/* Header Row (Time Slots) */}
-            <div className="header-cell sticky-header">เวลา / สนาม</div> 
+            <div className="header-cell sticky-header">เวลา / สนาม</div>
             {TIME_SLOTS.map((time) => (
               <div key={time} className="header-cell time-label">
                 {time.substring(0, 5)}
               </div>
             ))}
-            
+
             {/* Body Rows (Pitches) */}
             {pitchIds.map((pitchId) => (
               <React.Fragment key={pitchId}>
                 {/* Pitch Name Header (Sticky First Column) */}
                 <div className="pitch-cell sticky-pitch-name">
-                  <Text fw={700} color="#15803d">{PITCH_MAP[pitchId]}</Text>
+                  <Text fw={700} color="#15803d">
+                    {PITCH_MAP[pitchId]}
+                  </Text>
                 </div>
-                
+
                 {/* Time Slot Cells */}
                 {TIME_SLOTS.map((time) => (
-                  <TimeSlotCell
-                    key={time}
-                    pitchId={pitchId}
-                    time={time}
-                  />
+                  <TimeSlotCell key={time} pitchId={pitchId} time={time} />
                 ))}
               </React.Fragment>
             ))}
           </div>
         </Paper>
       )}
-      
+
       {/* 🌟 9. CONDITION: แสดงข้อความเมื่อค้นหาแล้วแต่ไม่พบข้อมูล */}
       {!loading && !error && isDataInitialized && pitchesData.length === 0 && (
-         <Alert color="yellow" title="ไม่มีข้อมูล" mt="lg" ta="center">
-            ไม่พบสนามว่างสำหรับวันที่ {toYYYYMMDD(validDate)}
-         </Alert>
+        <Alert color="yellow" title="ไม่มีข้อมูล" mt="lg" ta="center">
+          ไม่พบสนามว่างสำหรับวันที่ {toYYYYMMDD(validDate)}
+        </Alert>
       )}
 
       {/* 🌟 10. NEW: ข้อความเริ่มต้นก่อนการค้นหาครั้งแรก */}
       {!loading && !error && !isDataInitialized && (
-          <Center py="xl">
-             <Text size="lg" c="dimmed">กรุณาเลือกวันและกด "Search" เพื่อดูตารางเวลา</Text>
-          </Center>
+        <Center py="xl">
+          <Text size="lg" c="dimmed">
+            กรุณาเลือกวันและกด "Search" เพื่อดูตารางเวลา
+          </Text>
+        </Center>
       )}
-
 
       {/* ----------------------------------------------------- */}
       {/* 🌟 Inline Styles (CSS) for the Grid View (remains the same) */}
