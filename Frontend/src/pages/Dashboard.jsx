@@ -38,10 +38,7 @@ function Dashboard() {
       ) {
         const parts = selectedDate.split("-");
         dateObj = new Date(parts[0], parts[1] - 1, parts[2]);
-      } else if (
-        selectedDate &&
-        typeof selectedDate.toISOString === "function"
-      )
+      } else if (selectedDate && typeof selectedDate.toISOString === "function")
         dateObj = selectedDate;
 
       if (dateObj) {
@@ -154,7 +151,7 @@ html, body {
   font-size: 1.6rem;
   font-weight: 700;
   margin-bottom: 20px;
-  margin-left: 180px;
+  margin-left: 90px;
   text-shadow: 0 0 10px rgba(0,255,255,0.6);
 }
 
@@ -163,7 +160,7 @@ html, body {
   background: rgba(255, 255, 255, 1);
   border-radius: 20px;
   padding: 18px;
-  margin-left: 150px;
+  margin-left: 189px;
   margin-right: 120px;
   border: 1px solid rgba(0,255,255,0.4);
   box-shadow: 0 0 15px rgba(0,255,255,0.3);
@@ -282,7 +279,6 @@ html, body {
 }
 `}</style>
 
-
       <div className="dashboard-container">
         <Title order={1} className="dashboard-title">
           ⚽ ระบบจองสนามฟุตบอล ⚽
@@ -290,7 +286,7 @@ html, body {
 
         <Paper shadow="xl" p="xl" withBorder className="glass-card">
           <Title order={3} className="section-title">
-            📅 เลือกวันที่
+            📅 เลือกวันที่เพื่อจองสนามฟุตบอล
           </Title>
 
           <DatePicker
@@ -309,16 +305,27 @@ html, body {
                 <span>‹</span>
               </div>
             }
-            
           />
         </Paper>
 
         {loading && <Loader my="xl" size="xl" variant="dots" />}
-        {error && <Alert color="red" my="xl">{error}</Alert>}
+        {error && (
+          <Alert color="red" my="xl">
+            {error}
+          </Alert>
+        )}
 
         {selectedDate && !loading && (
-          <Paper shadow="xl" p="xl" withBorder mt="xl" className="glass-card pitches-wrapper">
-            <Title order={3} className="section-title">🕒 เลือกสนามและช่วงเวลา</Title>
+          <Paper
+            shadow="xl"
+            p="xl"
+            withBorder
+            mt="xl"
+            className="glass-card pitches-wrapper"
+          >
+            <Title order={3} className="section-title">
+              🕒 เลือกสนามและช่วงเวลา
+            </Title>
             <div className="pitches-scroll">
               {pitchesData.length === 0 && (
                 <Text c="gray.4">⚠️ ไม่มีสนามว่างสำหรับวันที่เลือก</Text>

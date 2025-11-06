@@ -27,3 +27,8 @@ CREATE TABLE bookings (
   end_time TIME NOT NULL,
   status VARCHAR(20) DEFAULT 'confirmed'
 );
+
+INSERT INTO pitches (name, location) VALUES
+('สนาม A','นนทบุรี'),
+('สนาม B','นนทบุรี'),
+('สนาม C','นนทบุรี');

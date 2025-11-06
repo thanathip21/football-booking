@@ -18,9 +18,7 @@ const Header = () => {
           <Anchor component={Link} to="/my-bookings">
             การจองของฉัน
           </Anchor>
-          <Anchor component={Link} to="/create-booking">
-            สร้างการจอง
-          </Anchor>
+          
         </Group>
 
         {/* เมนูผู้ใช้/ออกจากระบบ */}
