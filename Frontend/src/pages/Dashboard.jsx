@@ -93,175 +93,195 @@ function Dashboard() {
   return (
     <div className="dashboard-bg">
       <style>{`
-  html, body {
-    margin: 0;
-    padding: 0;
-    min-height: 100%;
-    width: 100%;
-    font-family: 'Prompt', sans-serif;
-    background: linear-gradient(135deg,#0f2027,#203a43,#2c5364);
-  }
+html, body {
+  margin: 0;
+  padding: 0;
+  min-height: 100%;
+  width: 100%;
+  font-family: 'Prompt', sans-serif;
+  background: linear-gradient(135deg,#0f2027,#203a43,#2c5364);
+}
 
-  .dashboard-bg {
-    width: 100%;
-    min-height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
-    padding: 30px;
-  }
+.dashboard-bg {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 30px;
+}
 
-  .dashboard-container {
-    width: 100%;
-    max-width: 1200px;
-    display: flex;
-    flex-direction: column;
-    gap: 30px;
-  }
+.dashboard-container {
+  width: 100%;
+  max-width: 800px;
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
 
-  .dashboard-title {
-    color: #00fff7;
-    font-weight: 900;
-    font-size: 3rem;
-    text-align: center;
-    text-shadow: 0 0 10px #00fff7, 0 0 20px #00bfff;
-    letter-spacing: 1px;
-    animation: glow 1.8s infinite alternate;
-  }
-  @keyframes glow {
-    0% { text-shadow: 0 0 10px #00fff7, 0 0 20px #00bfff; }
-    100% { text-shadow: 0 0 25px #00fff7, 0 0 50px #00bfff; }
-  }
+.dashboard-title {
+  color: #00fff7;
+  font-weight: 900;
+  font-size: 3rem;
+  text-align: center;
+  text-shadow: 0 0 10px #00fff7, 0 0 20px #00bfff;
+  letter-spacing: 1px;
+  animation: glow 1.8s infinite alternate;
+}
+@keyframes glow {
+  0% { text-shadow: 0 0 10px #00fff7, 0 0 20px #00bfff; }
+  100% { text-shadow: 0 0 25px #00fff7, 0 0 50px #00bfff; }
+}
 
-  .glass-card {
-    background: rgba(255, 255, 255, 0.07);
-    backdrop-filter: blur(25px);
-    border-radius: 25px;
-    padding: 35px;
-    box-shadow: 0 15px 60px rgba(0, 0, 0, 0.5);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    transition: transform 0.3s, box-shadow 0.3s;
-  }
-  .glass-card:hover {
-    transform: scale(1.03);
-    box-shadow: 0 20px 70px rgba(0, 0, 0, 0.6);
-  }
+.glass-card {
+  background: rgba(255, 255, 255, 0.07);
+  backdrop-filter: blur(25px);
+  border-radius: 25px;
+  padding: 35px;
+  margin-left: 100px;
+  margin-right: 100px;
+  box-shadow: 0 15px 60px rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+.glass-card:hover {
+  transform: scale(1.03);
+  box-shadow: 0 20px 70px rgba(0, 0, 0, 0.6);
+}
 
-  .section-title {
-    color: #00fff7;
-    font-size: 1.6rem;
-    font-weight: 700;
-    margin-bottom: 20px;
-    text-shadow: 0 0 10px rgba(0,255,255,0.6);
-  }
+.section-title {
+  color: #00fff7;
+  font-size: 1.6rem;
+  font-weight: 700;
+  margin-bottom: 20px;
+  margin-left: 180px;
+  text-shadow: 0 0 10px rgba(0,255,255,0.6);
+}
 
-  /* ✅ ปรับปฏิทินให้ดูดี */
-  .custom-datepicker {
-    background: rgba(255,255,255,0.1);
-    border-radius: 20px;
-    padding: 15px;
-    transition: all 0.3s ease;
-  }
-  .custom-datepicker:hover {
-    transform: scale(1.02);
-    box-shadow: 0 0 25px rgba(0,255,255,0.7);
-  }
+/* ✅ ปรับปฏิทิน DatePicker ให้ดูเด่น */
+.custom-datepicker {
+  background: rgba(255, 255, 255, 1);
+  border-radius: 20px;
+  padding: 18px;
+  margin-left: 150px;
+  margin-right: 120px;
+  border: 1px solid rgba(0,255,255,0.4);
+  box-shadow: 0 0 15px rgba(0,255,255,0.3);
+}
+.custom-datepicker:hover {
+  transform: scale(1.03);
+  box-shadow: 0 0 35px rgba(0,255,255,0.8);
+}
 
-  .mantine-DatePicker-calendarHeader {
-    justify-content: space-between;
-  }
+/* หัวเดือน */
+.mantine-DatePicker-calendarHeader {
+  justify-content: center;
+}
 
-  .mantine-DatePicker-calendarHeaderLevel {
-    color: #00fff7;
-    font-weight: bold;
-    font-size: 18px;
-    text-shadow: 0 0 10px rgba(0,255,255,0.6);
-  }
+.mantine-DatePicker-calendarHeaderLevel {
+  color: #000000ff;
+  font-weight: bold;
+  font-size: 18px;
+  text-shadow: 0 0 10px rgba(0,255,255,0.6);
+}
 
-  /* ปุ่มลูกศร */
-  .calendar-arrow {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: linear-gradient(135deg,#00fff7,#00d4ff);
-    color: #000;
-    font-weight: bold;
-    font-size: 20px;
-    border-radius: 50%;
-    width: 34px;
-    height: 34px;
-    box-shadow: 0 0 15px rgba(0,255,255,0.6);
-    transition: all 0.3s ease;
-    cursor: pointer;
-  }
-  .calendar-arrow:hover {
-    background: linear-gradient(135deg,#ff00e0,#00fff7);
-    transform: scale(1.15);
-    box-shadow: 0 0 30px rgba(255,0,200,0.7);
-    color: white;
-  }
+/* ลูกศรเปลี่ยนเดือน */
+.calendar-arrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg,#00fff7,#00d4ff);
+  color: #000;
+  font-weight: bold;
+  font-size: 20px;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  box-shadow: 0 0 15px rgba(0,255,255,0.6);
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+.calendar-arrow:hover {
+  background: linear-gradient(135deg,#ff00e0,#00fff7);
+  transform: scale(1.15) rotate(15deg);
+  box-shadow: 0 0 35px rgba(255,0,200,0.8);
+  color: white;
+}
 
-  /* ปุ่มวันในปฏิทิน */
-  .mantine-DatePicker-day {
-    border-radius: 50% !important;
-    font-weight: 600;
-    transition: all 0.2s ease;
-  }
+/* ปรับสีวันต่างๆ */
+.mantine-DatePicker-day {
+  border-radius: 50% !important;
+  font-weight: 600;
+  color: #000000ff;
+  transition: all 0.2s ease;
+}
 
-  .mantine-DatePicker-day:hover {
-    background: linear-gradient(135deg,#00fff7,#00d4ff) !important;
-    color: #000 !important;
-    transform: scale(1.15);
-    box-shadow: 0 0 15px rgba(0,255,255,0.6);
-  }
+.mantine-DatePicker-day:hover {
+  background: linear-gradient(135deg,#00fff7,#00d4ff) !important;
+  color: #000 !important;
+  transform: scale(1.15);
+  box-shadow: 0 0 15px rgba(0,255,255,0.6);
+}
 
-  .mantine-DatePicker-day[data-selected] {
-    background: linear-gradient(135deg,#ff00e0,#00fff7) !important;
-    color: #fff !important;
-    box-shadow: 0 0 20px rgba(255,0,200,0.7);
-  }
+/* วันเสาร์เป็นฟ้า วันอาทิตย์เป็นชมพู */
+.mantine-DatePicker-day[data-day-of-week="6"] {
+  color: #00d4ff !important;
+}
+.mantine-DatePicker-day[data-day-of-week="0"] {
+  color: #ff6bc6 !important;
+}
 
-  .pitch-card {
-    margin-top: 20px;
-    padding: 20px;
-    border-radius: 20px;
-    background: rgba(255,255,255,0.05);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255,255,255,0.1);
-  }
+/* วันถูกเลือก */
+.mantine-DatePicker-day[data-selected] {
+  background: linear-gradient(135deg,#ff00e0,#00fff7) !important;
+  color: #fff !important;
+  box-shadow: 0 0 25px rgba(255,0,200,0.8);
+}
 
-  .time-button {
-    background: linear-gradient(135deg,#00fff7,#00d4ff);
-    color: #000;
-    font-weight: 700;
-    border-radius: 12px;
-    border: none;
-    padding: 10px 22px;
-    transition: all 0.25s ease;
-  }
-  .time-button:hover {
-    background: linear-gradient(135deg,#ff00e0,#00fff7);
-    transform: scale(1.15);
-    box-shadow: 0 0 25px rgba(0,255,200,0.8);
-    color: #fff;
-  }
+/* กล่องสนามและปุ่มเวลา */
+.pitch-card {
+  margin-top: 20px;
+  padding: 20px;
+  border-radius: 20px;
+  background: rgba(255,255,255,0.05);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255,255,255,0.1);
+}
 
-  .pitches-scroll {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-    max-height: 60vh;
-    overflow-y: auto;
-    padding-right: 5px;
-  }
-  .pitches-scroll::-webkit-scrollbar {
-    width: 8px;
-  }
-  .pitches-scroll::-webkit-scrollbar-thumb {
-    background: rgba(0,255,255,0.5);
-    border-radius: 4px;
-  }
+.time-button {
+  background: linear-gradient(135deg,#00fff7,#00d4ff);
+  color: #000;
+  font-weight: 700;
+  border-radius: 12px;
+  border: none;
+  padding: 10px 22px;
+  transition: all 0.25s ease;
+}
+.time-button:hover {
+  background: linear-gradient(135deg,#ff00e0,#00fff7);
+  transform: scale(1.15);
+  box-shadow: 0 0 25px rgba(0,255,200,0.8);
+  color: #fff;
+}
+
+/* สกอลล์รายการสนาม */
+.pitches-scroll {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  max-height: 60vh;
+  overflow-y: auto;
+  padding-right: 5px;
+}
+.pitches-scroll::-webkit-scrollbar {
+  width: 8px;
+}
+.pitches-scroll::-webkit-scrollbar-thumb {
+  background: rgba(0,255,255,0.5);
+  border-radius: 4px;
+}
 `}</style>
+
 
       <div className="dashboard-container">
         <Title order={1} className="dashboard-title">
@@ -289,6 +309,7 @@ function Dashboard() {
                 <span>‹</span>
               </div>
             }
+            
           />
         </Paper>
 
