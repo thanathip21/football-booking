@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
 import {
@@ -12,10 +12,9 @@ import {
   Text,
   Group,
 } from "@mantine/core";
-import { IconBallFootball } from "@tabler/icons-react";
-import { useAuth } from "../untils/AuthContext"; // 🌟 1. Import useAuth
+import { useAuth } from "../untils/AuthContext";
 import Logo from "../assets/Logo.png";
-import BackgroundVideo from '../assets/background2.mp4';
+import BackgroundVideo from "../assets/background2.mp4";
 
 function Login() {
   const [formData, setFormData] = useState({ username: "", password: "" });
@@ -51,20 +50,28 @@ function Login() {
   };
 
   return (
-    <div style={{ position: 'relative', minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+    <div
+      style={{
+        position: "relative",
+        minHeight: "100vh",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+      }}
+    >
       {/* 🌟 2. เพิ่มแท็ก <video> เป็นพื้นหลัง */}
-      <video 
-        autoPlay 
-        loop 
-        muted 
-        playsInline 
+      <video
+        autoPlay
+        loop
+        muted
+        playsInline
         style={{
-          position: 'absolute',
+          position: "absolute",
           top: 0,
           left: 0,
-          width: '100%',
-          height: '100%',
-          objectFit: 'cover', // ทำให้วิดีโอครอบคลุมพื้นที่ทั้งหมด
+          width: "100%",
+          height: "100%",
+          objectFit: "cover", // ทำให้วิดีโอครอบคลุมพื้นที่ทั้งหมด
           zIndex: -1, // ให้อยู่เบื้องหลังเนื้อหาอื่นๆ
         }}
       >
@@ -75,13 +82,11 @@ function Login() {
       <Container size={420}>
         <Paper shadow="lg" p={80} radius="lg" withBorder>
           <Group justify="center" mb="md" style={{ width: "100%" }}>
-            
             <img
               src={Logo}
               alt="Your Company Logo"
               style={{ width: "100px", height: "auto", display: "block" }} // 👈 เพิ่ม display: 'block' เพื่อความมั่นใจ
             />
-           
           </Group>
           <Title ta="center" order={2}>
             เข้าสู่ระบบ
@@ -111,8 +116,12 @@ function Login() {
                 backgroundColor: "#59c2ffff",
                 transition: "0.3s",
               }}
-              onMouseEnter={(e) => (e.target.style.backgroundColor = "#45b8fbff")}
-              onMouseLeave={(e) => (e.target.style.backgroundColor = "#59c2ffff")}
+              onMouseEnter={(e) =>
+                (e.target.style.backgroundColor = "#45b8fbff")
+              }
+              onMouseLeave={(e) =>
+                (e.target.style.backgroundColor = "#59c2ffff")
+              }
             >
               เข้าสู่ระบบ
             </Button>

@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import { useState, useMemo } from "react";
 import { useLocation, useNavigate, Navigate } from "react-router-dom";
 import api from "../api";
 import {
@@ -26,14 +26,20 @@ function CreateBooking() {
     if (!start_time || !all_available_slots) return [];
     const h = (t) => Number(t.split(":")[0]);
     const startTimeHour = h(start_time);
-    const availableHours = new Set(all_available_slots.map((slot) => h(slot.start_time)));
+    const availableHours = new Set(
+      all_available_slots.map((slot) => h(slot.start_time))
+    );
     const options = [];
     for (let i = 1; startTimeHour + i <= 24; i++) {
       const currentSlotHour = startTimeHour + (i - 1);
       if (availableHours.has(currentSlotHour)) {
         const endHour = startTimeHour + i;
-        const endHourString = (endHour >= 24 ? "00" : String(endHour).padStart(2, "0")) + ":00";
-        options.push({ value: String(i), label: `${i} ชั่วโมง (สิ้นสุด ${endHourString})` });
+        const endHourString =
+          (endHour >= 24 ? "00" : String(endHour).padStart(2, "0")) + ":00";
+        options.push({
+          value: String(i),
+          label: `${i} ชั่วโมง (สิ้นสุด ${endHourString})`,
+        });
       } else {
         break;
       }
@@ -45,7 +51,12 @@ function CreateBooking() {
     setLoading(true);
     setError("");
     try {
-      const bookingData = { pitch_id, booking_date: date, start_time, duration_hours: Number(duration) };
+      const bookingData = {
+        pitch_id,
+        booking_date: date,
+        start_time,
+        duration_hours: Number(duration),
+      };
       await api.post("/bookings", bookingData);
       navigate("/my-bookings");
     } catch (err) {
@@ -133,18 +144,24 @@ function CreateBooking() {
 
       <Container size={420}>
         <Paper withBorder shadow="md" className="glass-card">
-          <Title order={2} className="section-title">ยืนยันการจอง</Title>
+          <Title order={2} className="section-title">
+            ยืนยันการจอง
+          </Title>
 
           <Text className="info-label">สนาม:</Text>
           <Text className="info-value">{pitch_name}</Text>
 
           <Text className="info-label">วันที่:</Text>
-          <Text className="info-value">{new Date(date).toLocaleDateString("th-TH")}</Text>
+          <Text className="info-value">
+            {new Date(date).toLocaleDateString("th-TH")}
+          </Text>
 
           <Text className="info-label">เวลาเริ่มต้น:</Text>
-          <Text className="info-value">{start_time.substring(0,5)} น.</Text>
+          <Text className="info-value">{start_time.substring(0, 5)} น.</Text>
 
-          <hr style={{ margin: "25px 0", borderColor:"rgba(0,255,255,0.3)" }} />
+          <hr
+            style={{ margin: "25px 0", borderColor: "rgba(0,255,255,0.3)" }}
+          />
 
           <Select
             label="เลือกจำนวนชั่วโมง"
@@ -154,7 +171,13 @@ function CreateBooking() {
             required
           />
 
-          <Button fullWidth mt="xl" className="neon-button" onClick={handleSubmitBooking} loading={loading}>
+          <Button
+            fullWidth
+            mt="xl"
+            className="neon-button"
+            onClick={handleSubmitBooking}
+            loading={loading}
+          >
             ยืนยันการจอง
           </Button>
 

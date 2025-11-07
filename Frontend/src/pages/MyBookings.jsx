@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import api from "../api";
 import {
   Container,
@@ -250,19 +250,19 @@ html, body {
               <Loader size="xl" variant="dots" color="cyan" />
             </div>
           )}
-          
+
           {error && (
             <Alert color="red" radius="md" style={{ marginTop: "20px" }}>
               {error}
             </Alert>
           )}
-          
+
           {!loading && !error && (
             <div>
               <Title order={3} className="section-title">
                 🎫 รายการจองทั้งหมด
               </Title>
-              
+
               {bookings.length === 0 ? (
                 <Text className="no-bookings-text">
                   ⚠️ คุณยังไม่มีรายการจอง
@@ -279,10 +279,14 @@ html, body {
                         ⚽ {booking.pitch_name}
                       </Text>
                       <Text className="booking-card-text">
-                        📅 วันที่: {new Date(booking.booking_date).toLocaleDateString("th-TH")}
+                        📅 วันที่:{" "}
+                        {new Date(booking.booking_date).toLocaleDateString(
+                          "th-TH"
+                        )}
                       </Text>
                       <Text className="booking-card-text">
-                        🕒 เวลา: {booking.start_time.substring(0, 5)} - {booking.end_time.substring(0, 5)}
+                        🕒 เวลา: {booking.start_time.substring(0, 5)} -{" "}
+                        {booking.end_time.substring(0, 5)}
                       </Text>
                     </div>
                   ))}
@@ -294,25 +298,25 @@ html, body {
       </div>
 
       {/* Modal */}
-      <Modal 
-        opened={opened} 
-        onClose={close} 
+      <Modal
+        opened={opened}
+        onClose={close}
         title={<span className="modal-title">รายละเอียดการจอง</span>}
         size="lg"
         styles={{
           content: {
-            background: 'linear-gradient(135deg,#0f2027,#203a43)',
+            background: "linear-gradient(135deg,#0f2027,#203a43)",
           },
           header: {
-            background: 'linear-gradient(135deg,#0f2027,#203a43)',
-            borderBottom: '1px solid rgba(0,255,255,0.3)',
+            background: "linear-gradient(135deg,#0f2027,#203a43)",
+            borderBottom: "1px solid rgba(0,255,255,0.3)",
           },
           close: {
-            color: '#00fff7',
-            '&:hover': {
-              background: 'rgba(0,255,255,0.2)',
-            }
-          }
+            color: "#00fff7",
+            "&:hover": {
+              background: "rgba(0,255,255,0.2)",
+            },
+          },
         }}
       >
         {selectedBooking && (
@@ -322,11 +326,15 @@ html, body {
             </Text>
 
             <Text className="modal-text">
-              📅 วันที่: {new Date(selectedBooking.booking_date).toLocaleDateString("th-TH")}
+              📅 วันที่:{" "}
+              {new Date(selectedBooking.booking_date).toLocaleDateString(
+                "th-TH"
+              )}
             </Text>
 
             <Text className="modal-text">
-              🕒 เวลา: {selectedBooking.start_time.substring(0, 5)} - {selectedBooking.end_time.substring(0, 5)}
+              🕒 เวลา: {selectedBooking.start_time.substring(0, 5)} -{" "}
+              {selectedBooking.end_time.substring(0, 5)}
             </Text>
 
             {cancelError && (
@@ -336,10 +344,7 @@ html, body {
             )}
 
             <Group justify="flex-end" mt="xl" gap="md">
-              <Button 
-                className="close-button"
-                onClick={close}
-              >
+              <Button className="close-button" onClick={close}>
                 ปิด
               </Button>
               <Button
