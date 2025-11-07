@@ -50,7 +50,34 @@ function Dashboard() {
           const response = await api.get(
             `/pitches/available-slots?date=${dateString}`
           );
-          setPitchesData(response.data);
+
+          // กรองเวลาที่ผ่านไปแล้วถ้าเป็นวันปัจจุบัน
+          const now = new Date();
+          const isToday = toYYYYMMDD(dateObj) === toYYYYMMDD(now);
+
+          const filteredData = response.data.map((pitch) => {
+            if (!isToday) {
+              return pitch; // ถ้าไม่ใช่วันนี้ แสดงทุกเวลา
+            }
+
+            // กรองเฉพาะสล็อตที่ยังไม่ผ่านไป
+            const currentHour = now.getHours();
+            const currentMinute = now.getMinutes();
+            const currentTimeInMinutes = currentHour * 60 + currentMinute;
+
+            const availableSlots = pitch.slots.filter((slot) => {
+              const [hour, minute] = slot.start_time.split(":").map(Number);
+              const slotTimeInMinutes = hour * 60 + minute;
+              return slotTimeInMinutes > currentTimeInMinutes;
+            });
+
+            return {
+              ...pitch,
+              slots: availableSlots,
+            };
+          });
+
+          setPitchesData(filteredData);
         } catch (err) {
           setError(
             "ไม่สามารถโหลดข้อมูลช่องว่างได้: " +
@@ -160,8 +187,8 @@ html, body {
   background: rgba(255, 255, 255, 1);
   border-radius: 20px;
   padding: 18px;
-  margin-left: 189px;
-  margin-right: 120px;
+  margin-left: 170px;
+  margin-right: 130px;
   border: 1px solid rgba(0,255,255,0.4);
   box-shadow: 0 0 15px rgba(0,255,255,0.3);
 }
@@ -334,7 +361,7 @@ html, body {
                 <div key={pitch.pitch_id} className="pitch-card">
                   <Title order={4}>{pitch.name}</Title>
                   {pitch.slots.length === 0 ? (
-                    <Text c="gray.4">-- สนามนี้เต็มแล้ว --</Text>
+                    <Text c="gray.4">-- ไม่สมารถจองได้ --</Text>
                   ) : (
                     <Group mt="sm" spacing="sm">
                       {pitch.slots.map((slot) => (
