@@ -42,7 +42,7 @@ function Register() {
       );
       setMessage(response.data.message);
       setError("");
-      setTimeout(() => navigate("/login"), 2000);
+      setTimeout(() => navigate("/login"), 1);
     } catch (err) {
       setError(err.response?.data?.message || "เกิดข้อผิดพลาดในการสมัคร");
       setMessage("");
